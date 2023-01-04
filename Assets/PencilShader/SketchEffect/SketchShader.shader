@@ -29,62 +29,8 @@ Shader "PencilShader/SketchShader"
         }
         LOD 100        
 
-        CGINCLUDE
-            #include "UnityCG.cginc" 
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
-            bool _Apply_Transparency;
-            float _CutOut;
-        ENDCG
-
-        Pass
-        {
-			Name "OUTLINE" 
-            Cull Front
-
-			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
-
-            struct appdata {
-                float4 vertex : POSITION;
-                float3 normal : NORMAL;
-                float2 texcoord : TEXCOORD0;
-            }; 
-            
-            struct v2f {
-                float4 pos : SV_POSITION;
-                float2 uv : TEXCOORD0;
-            };
-
-            float _OutlineWidth;
-            float4 _OutlineColor;
-
-            v2f vert (appdata v)
-            {
-                v2f o;
-
-                o.pos = UnityObjectToClipPos(v.vertex+ v.normal*_OutlineWidth/50); 
-                
-                o.uv =v.texcoord;
-                return o;
-            }
-
-            fixed4 frag (v2f i) : SV_Target
-            {
-                fixed4 col = fixed4(_OutlineColor.rgb,1);   
-
-                if(_Apply_Transparency) {
-                    if(tex2D(_MainTex, i.uv).a <=_CutOut){
-                        discard;
-                    }
-                }  
-                return col;
-            }
-            ENDCG
-        }
+        UsePass "Hide/PencilShaderUtil/OUTLINE"
         
-
         Pass
         {
             Name "BASE"
@@ -102,7 +48,9 @@ Shader "PencilShader/SketchShader"
             #include "AutoLight.cginc"
             #include "Sketch.cginc"
 
-
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
+            bool _Apply_Transparency;
             fixed4 _Color;
             sampler2D _PaperTex;
             float4 _PaperTex_ST;
@@ -114,6 +62,7 @@ Shader "PencilShader/SketchShader"
             bool _UseStroke;
             bool _Shadow;
             bool _ConsiderNormal;
+            float _CutOut;
 
             v2f vert (appdata v)
             {
