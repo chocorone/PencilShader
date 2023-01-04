@@ -46,8 +46,6 @@ Shader "PencilShader/SketchShader"
 			#pragma vertex vert
 			#pragma fragment frag
 
-            #include "UnityCG.cginc"
-
             struct appdata {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
@@ -102,21 +100,8 @@ Shader "PencilShader/SketchShader"
             #include "UnityLightingCommon.cginc"
             #include "Lighting.cginc" 
             #include "AutoLight.cginc"
+            #include "Sketch.cginc"
 
-            struct appdata {
-                float4 vertex : POSITION;
-                float3 normal : NORMAL;
-                float2 texcoord : TEXCOORD0;
-            }; 
-    
-            struct v2f {
-                float4 pos : SV_POSITION;
-                float3 normal : NORMAL;
-                float2 uv : TEXCOORD0;
-                float2 worldPos : TEXCOORD1;
-                half3 worldNormal:TEXCOORD2;
-                SHADOW_COORDS(3)
-            };
 
             fixed4 _Color;
             sampler2D _PaperTex;
@@ -134,7 +119,7 @@ Shader "PencilShader/SketchShader"
             {
                 v2f o;
 
-                o.pos = UnityObjectToClipPos(v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertexOS);
                 o.worldPos=  ComputeScreenPos(o.pos).xy;
                 
                 o.uv =v.texcoord;
@@ -177,87 +162,13 @@ Shader "PencilShader/SketchShader"
                 col *= 3;
                 col *= _BrightNess;
 
-                if(!_UseStroke){
-                    col *= tex2D(_PaperTex, i.uv)*0.7;
-                    return col;
-                }
-
-                //全体に紙のテクスチャを適用
-                fixed4  col2 = tex2D(_PaperTex, i.uv)*1.2;
-                float black = col.r-0.15;
-
-                fixed2 scrPos = i.worldPos.xy* _StrokeDensity;
-
-                // //階調化なし
-                if(_UseGradation){
-                    if( col.r <= 0.2f ){ 
-                        col2 *= tex2D(_Stroke1, scrPos)*black*4; 
-                    } 
-                    else if(col.r <= 0.8f){
-                        col2 *= tex2D(_Stroke2, scrPos)*black*2;
-                    }
-                //階調化あり
-                }else{
-                    if( black <= 0.1f ){
-                        col2 *= tex2D(_Stroke1, scrPos)*0.1;
-                    }
-                    else if( black <= 0.2f ){
-                        col2 *= tex2D(_Stroke1, scrPos)*0.3;
-                    }
-                    else if( black <= 0.3f ){ 
-                        col2 *= tex2D(_Stroke1, scrPos)*0.5; 
-                    } 
-                    else if( black <= 0.4f ){
-                        col2 *= tex2D(_Stroke2, scrPos)*0.4; 
-                    }
-                    else if(black <= 0.6f){
-                        col2 *= tex2D(_Stroke2, scrPos)*0.8;
-                    }
-                    else if(black <= 0.8f){
-                        col2 *= tex2D(_Stroke2, scrPos)*1.2;
-                    }
-                }
+                fixed4 col2 = calSketchShading(col,_UseStroke,_UseGradation,_StrokeDensity,_PaperTex,_Stroke1,_Stroke2,i.uv,i.worldPos);
                 
                 return col2;
             }
             ENDCG
         }
 
-        Pass
-        {
-            Tags{ "LightMode"="ShadowCaster" }
-
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            #pragma multi_compile_shadowcaster
-
-            #include "UnityCG.cginc"
-
-            struct appdata
-            {
-                float4 vertex : POSITION;
-                float3 normal : NORMAL;
-                float2 texcoord : TEXCOORD0;
-            };
-
-            struct v2f
-            {
-                V2F_SHADOW_CASTER;
-            };
-
-            v2f vert (appdata v)
-            {
-                v2f o;
-                TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
-                return o;
-            }
-
-            fixed4 frag (v2f i) : SV_Target
-            {
-                SHADOW_CASTER_FRAGMENT(i)
-            }
-            ENDCG
-        }
+        UsePass "Hide/PencilShaderUtil/ShadowCaster"
     }
 }
