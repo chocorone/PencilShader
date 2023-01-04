@@ -36,7 +36,6 @@ Shader "Hide/PencilShaderUtil"
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
-            bool _Apply_Transparency;
             float _CutOut;
 
             float _OutlineWidth;
@@ -69,11 +68,10 @@ Shader "Hide/PencilShaderUtil"
             {
                 fixed4 col = fixed4(_OutlineColor.rgb,1);   
 
-                if(_Apply_Transparency) {
-                    if(tex2D(_MainTex, i.uv).a <=_CutOut){
-                        discard;
-                    }
-                }  
+                if(tex2D(_MainTex, i.uv).a <=_CutOut){
+                    discard;
+                }
+                
                 return col;
             }
             ENDCG
@@ -101,17 +99,26 @@ Shader "Hide/PencilShaderUtil"
             struct v2f
             {
                 V2F_SHADOW_CASTER;
+                float2 uv : TEXCOORD0;
             };
+
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
+            float _CutOut;
 
             v2f vert (appdata v)
             {
                 v2f o;
+                o.uv =v.texcoord;
                 TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
                 return o;
             }
 
             fixed4 frag (v2f i) : SV_Target
-            {
+            {                
+                if(tex2D(_MainTex, i.uv).a <=_CutOut){
+                    discard;
+                }
                 SHADOW_CASTER_FRAGMENT(i)
             }
             ENDCG
