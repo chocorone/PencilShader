@@ -1,20 +1,5 @@
 #include "AutoLight.cginc"
 
-struct appdata {
-    float4 vertexOS : POSITION;
-    float3 normal : NORMAL;
-    float2 texcoord : TEXCOORD0;
-}; 
-
-struct v2f {
-    float4 pos : SV_POSITION;
-    float3 normal : NORMAL;
-    float2 uv : TEXCOORD0;
-    float2 worldPos : TEXCOORD1;
-    half3 worldNormal:TEXCOORD2;
-    SHADOW_COORDS(3)
-};
-
 half4 calSketchShading(half4 grayScaleCol,int useStroke,int useGradation,half strokeDensity,sampler2D paperTex,sampler2D stroke1,sampler2D stroke2,float2 uv,float2 worldPos)
 {
     if(!useStroke){

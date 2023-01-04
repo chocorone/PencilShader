@@ -13,7 +13,6 @@ Shader "PencilShader/SketchShader"
         _BrightNess ("BrightNess", Range(0.5, 20)) = 1//影を明るく
         [Toggle] _Shadow("Shadow", Float) = 1
         [Toggle] _ConsiderNormal("Consider dot(Normal*Light)", Float) = 1
-        [Toggle] _Apply_Transparency("Apply Transparency", Float) = 0//MainTexのアルファでくり抜くか
         _CutOut ("CutOut", Range(0, 1)) = 0.1//くり抜くアルファ値の上限
         [Toggle] _UseGradation("Use Gradation", Float) = 0//階調化をなくす
         [Toggle] _UseStroke("Use Stroke", Float) = 1//線を表示する
@@ -51,7 +50,6 @@ Shader "PencilShader/SketchShader"
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
-            bool _Apply_Transparency;
             fixed4 _Color;
             sampler2D _PaperTex;
             float4 _PaperTex_ST;
@@ -64,6 +62,22 @@ Shader "PencilShader/SketchShader"
             bool _Shadow;
             bool _ConsiderNormal;
             float _CutOut;
+
+            struct appdata {
+                float4 vertexOS : POSITION;
+                float3 normal : NORMAL;
+                float2 texcoord : TEXCOORD0;
+            }; 
+
+            struct v2f {
+                float4 pos : SV_POSITION;
+                float3 normal : NORMAL;
+                float2 uv : TEXCOORD0;
+                float2 worldPos : TEXCOORD1;
+                half3 worldNormal:TEXCOORD2;
+                SHADOW_COORDS(3)
+            };
+
 
             v2f vert (appdata v)
             {
@@ -79,23 +93,23 @@ Shader "PencilShader/SketchShader"
                 return o;
             }
             
-            fixed4 frag (v2f i) : SV_Target
+            half4 frag (v2f i) : SV_Target
             {   
                 if(tex2D(_MainTex, i.uv).a <=_CutOut){
                     discard;
                 }
 
-                fixed4  col = tex2D(_MainTex, i.uv);
-                col *= fixed4(_Color.rgb,1);
+                half4  col = tex2D(_MainTex, i.uv);
+                col *= half4(_Color.rgb,1);
 
                 //色を白黒に変換
-                col.rgb = dot(col.rgb, fixed3(0.3, 0.59, 0.11));
+                col.rgb = dot(col.rgb, half3(0.3, 0.59, 0.11));
 
                 //影を考慮
                 if(_Shadow){
-                    fixed4 shadow = SHADOW_ATTENUATION(i);
+                    half4 shadow = SHADOW_ATTENUATION(i);
                     half NdotL = saturate(dot(i.worldNormal, _WorldSpaceLightPos0.xyz));
-                    fixed4 diff = NdotL * _LightColor0;
+                    half4 diff = NdotL * _LightColor0;
                     col *= diff * shadow;
                 }
 
@@ -112,7 +126,7 @@ Shader "PencilShader/SketchShader"
                 col *= 3;
                 col *= _BrightNess;
 
-                fixed4 col2 = calSketchShading(col,_UseStroke,_UseGradation,_StrokeDensity,_PaperTex,_Stroke1,_Stroke2,i.uv,i.worldPos);
+                half4 col2 = calSketchShading(col,_UseStroke,_UseGradation,_StrokeDensity,_PaperTex,_Stroke1,_Stroke2,i.uv,i.worldPos);
                 
                 return col2;
             }
