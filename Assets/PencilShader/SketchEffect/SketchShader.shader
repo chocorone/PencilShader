@@ -7,6 +7,8 @@ Shader "PencilShader/SketchShader"
 
 		_OutlineWidth ("Outline", Range(0, 1)) = 0.1
 		_OutlineColor ("Outline Color", Color) = (0, 0, 0, 1)
+        [Toggle]_NormalOutline("Outline by normal", Float) = 1
+
 		_StrokeDensity ("Stroke Density", Range(1, 10)) = 5//線の密度
         _BrightNess ("BrightNess", Range(0.5, 20)) = 1//影を明るく
         [Toggle] _Shadow("Shadow", Float) = 1
@@ -26,8 +28,7 @@ Shader "PencilShader/SketchShader"
         {
             "Queue" = "AlphaTest"
             "RenderType" = "AlphaTest"
-        }
-        LOD 100        
+        }      
 
         UsePass "Hide/PencilShaderUtil/OUTLINE"
         

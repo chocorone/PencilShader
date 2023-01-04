@@ -33,7 +33,7 @@ Shader "Hide/PencilShaderUtil"
                 float4 pos : SV_POSITION;
                 float2 uv : TEXCOORD0;
             };
-            
+
             sampler2D _MainTex;
             float4 _MainTex_ST;
             bool _Apply_Transparency;
@@ -42,11 +42,24 @@ Shader "Hide/PencilShaderUtil"
             float _OutlineWidth;
             float4 _OutlineColor;
 
+            bool _NormalOutline;
+
             v2f vert (appdata v)
             {
                 v2f o;
 
-                o.pos = UnityObjectToClipPos(v.vertex+ v.normal*_OutlineWidth/50); 
+                if(_NormalOutline){
+                    o.pos = UnityObjectToClipPos(v.vertex+ v.normal*_OutlineWidth/50);
+                }else{
+                    float width = _OutlineWidth*0.02+1.0;
+                    half4x4 scaleMatrix = half4x4(width, 0, 0, 0,
+                                             0, width, 0, 0,
+                                             0, 0, width, 0,
+                                             0, 0, 0, 1);
+                    v.vertex = mul(scaleMatrix, v.vertex);
+                    o.pos = UnityObjectToClipPos(v.vertex);
+                }
+                 
                 
                 o.uv =v.texcoord;
                 return o;
