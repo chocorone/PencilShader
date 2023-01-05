@@ -111,10 +111,9 @@ Shader "PencilShader/SketchShader"
                     half NdotL = saturate(dot(i.worldNormal, _WorldSpaceLightPos0.xyz));
                     half4 diff = NdotL * _LightColor0;
                     col *= diff * shadow;
+                    col.g = col.r;
+                    col.b = col.r;
                 }
-
-                col.g = col.r;
-                col.b = col.r;
                 
                 //法線を考慮
                 if(_ConsiderNormal){

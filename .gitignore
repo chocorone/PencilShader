@@ -88,3 +88,5 @@ Thumbs.db
 *.DotSettings
 
 SceneTemplateSettings.json
+Assets/PencilShader/SketchEffect/Post
+Post.meta
