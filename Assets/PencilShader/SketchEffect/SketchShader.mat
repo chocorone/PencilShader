@@ -13,7 +13,9 @@ Material:
   m_InvalidKeywords:
   - _CONSIDERNORMAL_ON
   - _MOVE_ON
+  - _NORMALOUTLINE_ON
   - _SELFSHADOW_ON
+  - _SHADOW_ON
   - _USESTROKE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -89,10 +91,12 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _Move: 1
+    - _NormalOutline: 1
     - _OcclusionStrength: 1
-    - _OutlineWidth: 0.66
+    - _OutlineWidth: 1
     - _Parallax: 0.02
     - _SelfShadow: 1
+    - _Shadow: 1
     - _ShakeSize: 0.015
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1

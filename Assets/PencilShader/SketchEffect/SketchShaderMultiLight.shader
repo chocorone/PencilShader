@@ -36,7 +36,7 @@ Shader "PencilShader/SketchShader-MultiLight"
 
             Tags { "LightMode"="ForwardAdd" }
 
-            Blend SrcAlpha OneMinusSrcAlpha
+            Blend One One
             ZWrite Off
             
             CGPROGRAM
@@ -113,15 +113,13 @@ Shader "PencilShader/SketchShader-MultiLight"
                 UNITY_LIGHT_ATTENUATION(attenuation, i, i.normal);
                 half3 diff = max(0, dot(i.normal, lightDir)) * _LightColor0 * attenuation;
                 col.rgb *= diff;
-
+                
                 //色を白黒に変換
                 col.rgb = dot(col.rgb, half3(0.3, 0.59, 0.11));
-                col.g = col.r;
-                col.b = col.r;
+                col.rgb =min(col.r,0.4);
+                col = calSketchShading(col,_UseStroke,_UseGradation,_StrokeDensity,_PaperTex,_Stroke1,_Stroke2,i.uv,i.worldUVPos);
 
-                half4 col2 = calSketchShading(col,_UseStroke,_UseGradation,_StrokeDensity,_PaperTex,_Stroke1,_Stroke2,i.uv,i.worldUVPos);
-
-                return col2;
+                return col;
             }
             ENDCG
         }
