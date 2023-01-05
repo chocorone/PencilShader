@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Test
+  m_Name: SketchMultiLightMat
   m_Shader: {fileID: 4800000, guid: a9bfa47b86cff4cdb896f38f20742902, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords:
