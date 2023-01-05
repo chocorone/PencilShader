@@ -9,13 +9,15 @@ Shader "PencilShader/SketchShader-MultiLight"
 		_OutlineColor ("Outline Color", Color) = (0, 0, 0, 1)
         [Toggle]_NormalOutline("Outline by normal", Float) = 1
 
-		_StrokeDensity ("Stroke Density", Range(1, 10)) = 5//線の密度
-        _BrightNess ("BrightNess", Range(0.5, 20)) = 1//影を明るく
+		_StrokeDensity ("Stroke Density", Range(1, 10)) = 5
+        _AddBrightNess ("Add BrightNess", Range(0, 1)) = 0
+        _MultBrightNess ("Mult BrightNess", Range(0.1, 20)) = 0.5
         [Toggle] _Shadow("Shadow", Float) = 1
+        _ShadowBrightness ("Shadow BrightNess", Range(0, 2)) = 1
         [Toggle] _ConsiderNormal("Consider dot(Normal*Light)", Float) = 1
-        _CutOut ("CutOut", Range(0, 1)) = 0.1//くり抜くアルファ値の上限
-        [Toggle] _UseGradation("Use Gradation", Float) = 0//階調化をなくす
-        [Toggle] _UseStroke("Use Stroke", Float) = 1//線を表示する
+        _CutOut ("CutOut", Range(0, 1)) = 0.1
+        [Toggle] _UseGradation("Use Gradation", Float) = 0
+        [Toggle] _UseStroke("Use Stroke", Float) = 1
         _PaperTex ("PaperTexture", 2D) = "white" {}
         _Stroke1 ("Stroke1", 2D) = "white" {}
 		_Stroke2 ("Stroke2 ", 2D) = "white" {}

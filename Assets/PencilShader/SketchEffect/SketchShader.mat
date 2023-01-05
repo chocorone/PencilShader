@@ -76,6 +76,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AddBrightNess: 0
     - _Apply_Transparency: 0
     - _BrightNess: 1
     - _BumpScale: 1
@@ -91,12 +92,14 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _Move: 1
+    - _MultBrightNess: 1
     - _NormalOutline: 1
     - _OcclusionStrength: 1
     - _OutlineWidth: 1
     - _Parallax: 0.02
     - _SelfShadow: 1
     - _Shadow: 1
+    - _ShadowBrightness: 1
     - _ShakeSize: 0.015
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1

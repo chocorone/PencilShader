@@ -9,13 +9,15 @@ Shader "PencilShader/SketchShader"
 		_OutlineColor ("Outline Color", Color) = (0, 0, 0, 1)
         [Toggle]_NormalOutline("Outline by normal", Float) = 1
 
-		_StrokeDensity ("Stroke Density", Range(1, 10)) = 5//線の密度
-        _BrightNess ("BrightNess", Range(0.5, 20)) = 1//影を明るく
+		_StrokeDensity ("Stroke Density", Range(1, 10)) = 5
+        _AddBrightNess ("Add BrightNess", Range(0, 1)) = 0
+        _MultBrightNess ("Mult BrightNess", Range(0.1, 20)) = 0.5
         [Toggle] _Shadow("Shadow", Float) = 1
+        _ShadowBrightness ("Shadow BrightNess", Range(0, 2)) = 1
         [Toggle] _ConsiderNormal("Consider dot(Normal*Light)", Float) = 1
-        _CutOut ("CutOut", Range(0, 1)) = 0.1//くり抜くアルファ値の上限
-        [Toggle] _UseGradation("Use Gradation", Float) = 0//階調化をなくす
-        [Toggle] _UseStroke("Use Stroke", Float) = 1//線を表示する
+        _CutOut ("CutOut", Range(0, 1)) = 0.1
+        [Toggle] _UseGradation("Use Gradation", Float) = 0
+        [Toggle] _UseStroke("Use Stroke", Float) = 1
         _PaperTex ("PaperTexture", 2D) = "white" {}
         _Stroke1 ("Stroke1", 2D) = "white" {}
 		_Stroke2 ("Stroke2 ", 2D) = "white" {}
@@ -56,12 +58,15 @@ Shader "PencilShader/SketchShader"
             sampler2D _Stroke1;
             sampler2D _Stroke2;
             float _StrokeDensity;
-            float  _BrightNess;
+            float  _AddBrightNess;
+            float _MultBrightNess;
             bool _UseGradation;
             bool _UseStroke;
             bool _Shadow;
+            float _ShadowBrightness;
             bool _ConsiderNormal;
             float _CutOut;
+
 
             struct appdata {
                 float4 vertexOS : POSITION;
@@ -110,7 +115,7 @@ Shader "PencilShader/SketchShader"
                     half4 shadow = SHADOW_ATTENUATION(i);
                     half NdotL = saturate(dot(i.worldNormal, _WorldSpaceLightPos0.xyz));
                     half4 diff = NdotL * _LightColor0;
-                    col *= diff * shadow;
+                    col *= diff * shadow+(_ShadowBrightness-1);
                     col.g = col.r;
                     col.b = col.r;
                 }
@@ -123,11 +128,12 @@ Shader "PencilShader/SketchShader"
                 //明るさ補正
                 col += 0.1;
                 col *= 3;
-                col *= _BrightNess;
+                col *= _MultBrightNess;
+                col += _AddBrightNess;
 
-                half4 col2 = calSketchShading(col,_UseStroke,_UseGradation,_StrokeDensity,_PaperTex,_Stroke1,_Stroke2,i.uv,i.worldPos);
+                col = calSketchShading(col,_UseStroke,_UseGradation,_StrokeDensity,_PaperTex,_Stroke1,_Stroke2,i.uv,i.worldPos);
                 
-                return col2;
+                return col;
             }
             ENDCG
         }
