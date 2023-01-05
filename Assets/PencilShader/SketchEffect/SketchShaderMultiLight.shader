@@ -5,7 +5,7 @@ Shader "PencilShader/SketchShader-MultiLight"
         _MainTex ("MainTexture", 2D) = "white" {}
         _Color ("Diffuse Color", Color) = (1, 1, 1, 1)
 
-		_OutlineWidth ("Outline", Range(0, 1)) = 0.1
+		_OutlineWidth ("OutlineWidth", Range(0, 1)) = 0.1
 		_OutlineColor ("Outline Color", Color) = (0, 0, 0, 1)
         [Toggle]_NormalOutline("Outline by normal", Float) = 1
 
