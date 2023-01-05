@@ -21,7 +21,7 @@ Shader "Hide/URPPencilShaderUtil"
 			HLSLPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-           #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
             struct appdata {
                 float4 vertex : POSITION;
